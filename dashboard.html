@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PASIYA MD — Admin Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;600;700&display=swap');
+
+  :root {
+    --bg-deep: #0a0c10;
+    --bg-card: #111520;
+    --bg-card2: #161d2e;
+    --accent: #00e5ff;
+    --accent2: #7c4dff;
+    --accent3: #ff6f00;
+    --accent-glow: rgba(0, 229, 255, 0.25);
+    --text: #e2e8f0;
+    --text-dim: #64748b;
+    --border: rgba(0, 229, 255, 0.15);
+    --green: #00e676;
+    --red: #ff1744;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ---- AMBIENT BACKGROUND ---- */
+  body::before {
+    content:'';
+    position:fixed; inset:0; z-index:0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 20%, rgba(124,77,255,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0,229,255,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 60% at 50% 50%, rgba(255,111,0,0.04) 0%, transparent 70%);
+    pointer-events:none;
+  }
+
+  /* ---- HEADER / LOGO ---- */
+  .header {
+    position:relative; z-index:10;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 24px 40px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(17,21,32,0.95) 0%, transparent 100%);
+  }
+  .logo-area { display:flex; align-items:center; gap:18px; }
+  .logo-svg {
+    width:56px; height:56px;
+    filter: drop-shadow(0 0 12px var(--accent-glow));
+  }
+  .logo-text {
+    font-family:'Rajdhani', sans-serif;
+    font-size:2rem; font-weight:700;
+    letter-spacing:3px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 60%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-transform:uppercase;
+  }
+  .logo-sub { font-size:0.72rem; color:var(--text-dim); letter-spacing:4px; text-transform:uppercase; margin-top:-4px; }
+  .status-badge {
+    display:flex; align-items:center; gap:8px;
+    background: rgba(0,230,118,0.08);
+    border: 1px solid rgba(0,230,118,0.3);
+    border-radius:20px; padding:6px 16px;
+    font-size:0.8rem; font-weight:600; color:var(--green); letter-spacing:1px;
+  }
+  .status-badge .dot {
+    width:8px;height:8px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 6px var(--green);
+    animation: pulse-dot 2s infinite;
+  }
+  @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* ---- MAIN LAYOUT ---- */
+  .main {
+    position:relative; z-index:5;
+    max-width:1200px; margin:0 auto;
+    padding:36px 40px;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap:24px;
+  }
+
+  /* ---- CARDS ---- */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius:16px;
+    padding:28px;
+    position:relative;
+    overflow:hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .card:hover {
+    border-color: rgba(0,229,255,0.35);
+    box-shadow: 0 4px 30px rgba(0,229,255,0.08);
+  }
+  .card::before {
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity:0.6;
+  }
+  .card-title {
+    font-family:'Rajdhani',sans-serif;
+    font-size:1.15rem; font-weight:700;
+    color:var(--accent); letter-spacing:2px; text-transform:uppercase;
+    margin-bottom:18px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .card-title .icon { font-size:1.2rem; }
+
+  /* ---- STAT CARDS (top row) ---- */
+  .stats-row { grid-column:1 / -1; display:grid; grid-template-columns: repeat(4,1fr); gap:18px; }
+  .stat-card {
+    background: var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:14px; padding:22px 20px;
+    position:relative; overflow:hidden;
+    transition: transform 0.2s;
+  }
+  .stat-card:hover { transform:translateY(-2px); }
+  .stat-card .stat-icon {
+    position:absolute; top:16px; right:18px;
+    font-size:1.8rem; opacity:0.15;
+  }
+  .stat-card .stat-label {
+    font-size:0.7rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px;
+  }
+  .stat-card .stat-value {
+    font-family:'Rajdhani',sans-serif;
+    font-size:1.9rem; font-weight:700; color:var(--text);
+  }
+  .stat-card .stat-value.green { color:var(--green); }
+  .stat-card .stat-value.orange { color:var(--accent3); }
+  .stat-card .stat-value.purple { color:var(--accent2); }
+  .stat-card .stat-value.cyan { color:var(--accent); }
+
+  /* ---- MENU PREVIEW ---- */
+  .menu-preview { grid-column:1; }
+  .menu-list { list-style:none; }
+  .menu-list li {
+    display:flex; align-items:center; gap:14px;
+    padding:12px 16px; border-radius:10px;
+    border:1px solid transparent;
+    transition: background 0.2s, border-color 0.2s;
+    cursor:default;
+  }
+  .menu-list li:hover {
+    background: rgba(0,229,255,0.04);
+    border-color: rgba(0,229,255,0.15);
+  }
+  .menu-list .num {
+    width:32px; height:32px; border-radius:8px;
+    background: linear-gradient(135deg,var(--accent2),var(--accent));
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:0.95rem;
+    flex-shrink:0;
+  }
+  .menu-list .item-label { font-size:0.92rem; color:var(--text); }
+  .menu-list .item-count { margin-left:auto; font-size:0.7rem; color:var(--text-dim); background:var(--bg-card2); padding:2px 8px; border-radius:10px; }
+
+  /* ---- FEATURES ---- */
+  .features { grid-column:2; }
+  .feature-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .feature-item {
+    background:var(--bg-card2); border-radius:12px; padding:16px;
+    border:1px solid var(--border);
+    display:flex; flex-direction:column; gap:6px;
+    transition: border-color 0.3s;
+  }
+  .feature-item:hover { border-color:rgba(0,229,255,0.3); }
+  .feature-item .f-icon { font-size:1.4rem; }
+  .feature-item .f-title { font-size:0.78rem; font-weight:600; color:var(--text); }
+  .feature-item .f-desc { font-size:0.65rem; color:var(--text-dim); line-height:1.4; }
+
+  /* ---- ACTIVITY LOG ---- */
+  .activity { grid-column:1 / -1; }
+  .log-table { width:100%; border-collapse:collapse; }
+  .log-table th {
+    text-align:left; font-size:0.65rem; color:var(--text-dim);
+    text-transform:uppercase; letter-spacing:2px;
+    padding:0 12px 12px; border-bottom:1px solid var(--border);
+    font-weight:600;
+  }
+  .log-table td {
+    padding:11px 12px; font-size:0.82rem; color:var(--text);
+    border-bottom:1px solid rgba(255,255,255,0.04);
+  }
+  .log-table tr:last-child td { border-bottom:none; }
+  .log-table .tag {
+    display:inline-block; font-size:0.62rem; font-weight:700; letter-spacing:1px;
+    padding:2px 8px; border-radius:6px; text-transform:uppercase;
+  }
+  .tag.song { background:rgba(0,230,118,0.12); color:var(--green); }
+  .tag.video { background:rgba(0,229,255,0.12); color:var(--accent); }
+  .tag.apk { background:rgba(255,111,0,0.12); color:var(--accent3); }
+  .tag.paper { background:rgba(124,77,255,0.12); color:var(--accent2); }
+  .tag.fb { background:rgba(24,119,242,0.15); color:#448aff; }
+  .tag.tiktok { background:rgba(234,10,82,0.12); color:#ff4081; }
+  .tag.menu { background:rgba(255,255,255,0.06); color:var(--text-dim); }
+
+  /* ---- FOOTER ---- */
+  .footer {
+    position:relative; z-index:5;
+    text-align:center; padding:30px;
+    font-size:0.68rem; color:var(--text-dim); letter-spacing:2px;
+  }
+  .footer span { color:var(--accent); }
+
+  /* ---- RESPONSIVE ---- */
+  @media(max-width:800px) {
+    .main { grid-template-columns:1fr; padding:20px; }
+    .stats-row { grid-template-columns:repeat(2,1fr); }
+    .header { padding:18px 20px; }
+    .menu-preview,.features,.activity { grid-column:1; }
+  }
+  @media(max-width:500px) {
+    .stats-row { grid-template-columns:1fr 1fr; }
+    .feature-grid { grid-template-columns:1fr; }
+  }
+
+  /* ---- ANIMATIONS ---- */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+  .card, .stat-card { animation: fadeUp 0.5s ease both; }
+  .stats-row .stat-card:nth-child(1){animation-delay:0.05s}
+  .stats-row .stat-card:nth-child(2){animation-delay:0.1s}
+  .stats-row .stat-card:nth-child(3){animation-delay:0.15s}
+  .stats-row .stat-card:nth-child(4){animation-delay:0.2s}
+  .menu-preview{animation-delay:0.25s}
+  .features{animation-delay:0.3s}
+  .activity{animation-delay:0.35s}
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="header">
+  <div class="logo-area">
+    <!-- PASIYA MD Logo SVG -->
+    <svg class="logo-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#00e5ff"/>
+          <stop offset="50%" stop-color="#7c4dff"/>
+          <stop offset="100%" stop-color="#00e5ff"/>
+        </linearGradient>
+        <linearGradient id="g2" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#7c4dff"/>
+          <stop offset="100%" stop-color="#00e5ff"/>
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2.5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Outer ring -->
+      <circle cx="40" cy="40" r="36" fill="none" stroke="url(#g1)" stroke-width="2.5" opacity="0.6"/>
+      <!-- Inner hexagon shape -->
+      <polygon points="40,12 64,26 64,54 40,68 16,54 16,26" fill="none" stroke="url(#g2)" stroke-width="2" opacity="0.5" filter="url(#glow)"/>
+      <!-- Center P letter -->
+      <text x="40" y="49" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="28" font-weight="700" fill="url(#g1)" filter="url(#glow)">P</text>
+      <!-- Small accent dots -->
+      <circle cx="40" cy="8" r="2.5" fill="var(--accent)" opacity="0.8"/>
+      <circle cx="40" cy="72" r="2.5" fill="var(--accent2)" opacity="0.8"/>
+      <circle cx="12" cy="24" r="1.8" fill="var(--accent)" opacity="0.4"/>
+      <circle cx="68" cy="56" r="1.8" fill="var(--accent2)" opacity="0.4"/>
+    </svg>
+    <div>
+      <div class="logo-text">PASIYA MD</div>
+      <div class="logo-sub">WhatsApp Bot Dashboard</div>
+    </div>
+  </div>
+  <div class="status-badge"><div class="dot"></div>BOT ONLINE — 24/7</div>
+</header>
+
+<!-- ============ MAIN GRID ============ -->
+<main class="main">
+
+  <!-- STATS ROW -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon">💬</div>
+      <div class="stat-label">Messages Today</div>
+      <div class="stat-value cyan" id="msgCount">1,284</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">👤</div>
+      <div class="stat-label">Active Users</div>
+      <div class="stat-value green" id="userCount">347</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⬇️</div>
+      <div class="stat-label">Downloads</div>
+      <div class="stat-value orange" id="dlCount">892</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⏱️</div>
+      <div class="stat-label">Uptime</div>
+      <div class="stat-value purple" id="uptime">24:00</div>
+    </div>
+  </div>
+
+  <!-- MENU PREVIEW -->
+  <div class="card menu-preview">
+    <div class="card-title"><span class="icon">📋</span> Bot Menu</div>
+    <ul class="menu-list">
+      <li><div class="num">1</div><span class="item-label">🎵 Songs / Music</span><span class="item-count">YT Audio</span></li>
+      <li><div class="num">2</div><span class="item-label">🎥 Videos</span><span class="item-count">YT Video</span></li>
+      <li><div class="num">3</div><span class="item-label">📘 Facebook Videos</span><span class="item-count">FB DL</span></li>
+      <li><div class="num">4</div><span class="item-label">🎭 TikTok Videos</span><span class="item-count">TT DL</span></li>
+      <li><div class="num">5</div><span class="item-label">📦 APK Downloads</span><span class="item-count">4 APKs</span></li>
+      <li><div class="num">6</div><span class="item-label">📝 Past Papers</span><span class="item-count">5 Papers</span></li>
+      <li><div class="num">7</div><span class="item-label">📋 Mediafire Links</span><span class="item-count">5 Links</span></li>
+      <li><div class="num">8</div><span class="item-label">📖 Help</span><span class="item-count">Guide</span></li>
+      <li><div class="num">0</div><span class="item-label">👤 About Bot</span><span class="item-count">Info</span></li>
+    </ul>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="card features">
+    <div class="card-title"><span class="icon">⚡</span> Features</div>
+    <div class="feature-grid">
+      <div class="feature-item">
+        <span class="f-icon">🎵</span>
+        <div class="f-title">Song Download</div>
+        <div class="f-desc">YouTube audio extraction, high quality MP3</div>
+      </div>
+      <div class="feature-item">
+        <span class="f-icon">🎥</span>
+        <div class="f-title">Video Download</div>
+        <div class="f-desc">YouTube video with audio, best quality</div>
+      </div>
+      <div class="feature-item">
+        <span class="f-icon">📘</span>
+        <div class="f-title">Facebook DL</div>
+        <div class="f-desc">Facebook video download assistant</div>
+      </div>
+      <div class="feature-item">
+        <span class="f-icon">🎭</span>
+        <div class="f-title">TikTok DL</div>
+        <div class="f-desc">TikTok video download assistant</div>
+      </div>
+      <div class="feature-item">
+        <span class="f-icon">📦</span>
+        <div class="f-title">APK Store</div>
+        <div class="f-desc">Mediafire hosted APK downloads</div>
+      </div>
+      <div class="feature-item">
+        <span class="f-icon">📝</span>
+        <div class="f-title">Past Papers</div>
+        <div class="f-desc">O/L & A/L past paper PDFs via Mediafire</div>
+      </div>
+      <div class="feature-item">
+        <span class="f-icon">🔗</span>
+        <div class="f-title">Mediafire Hub</div>
+        <div class="f-desc">Curated Mediafire link collection</div>
+      </div>
+      <div class="feature-item">
+        <span class="f-icon">♻️</span>
+        <div class="f-title">24/7 Auto-Reconnect</div>
+        <div class="f-desc">Never crashes — auto restarts always</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY LOG -->
+  <div class="card activity">
+    <div class="card-title"><span class="icon">📊</span> Recent Activity</div>
+    <table class="log-table">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>User</th>
+          <th>Action</th>
+          <th>Details</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="activityBody">
+        <tr><td>2:41 PM</td><td>+94 77 xxx</td><td><span class="tag song">Song</span></td><td>YouTube Audio DL</td><td style="color:var(--green)">✓ Done</td></tr>
+        <tr><td>2:38 PM</td><td>+94 71 xxx</td><td><span class="tag apk">APK</span></td><td>WhatsApp Business</td><td style="color:var(--green)">✓ Sent</td></tr>
+        <tr><td>2:35 PM</td><td>+94 76 xxx</td><td><span class="tag video">Video</span></td><td>YouTube Video DL</td><td style="color:var(--green)">✓ Done</td></tr>
+        <tr><td>2:33 PM</td><td>+94 72 xxx</td><td><span class="tag paper">Paper</span></td><td>Maths 2023 A/L</td><td style="color:var(--green)">✓ Sent</td></tr>
+        <tr><td>2:30 PM</td><td>+94 78 xxx</td><td><span class="tag fb">FB</span></td><td>Facebook Video</td><td style="color:var(--green)">✓ Done</td></tr>
+        <tr><td>2:28 PM</td><td>+94 74 xxx</td><td><span class="tag tiktok">TikTok</span></td><td>TikTok Video</td><td style="color:var(--green)">✓ Done</td></tr>
+        <tr><td>2:25 PM</td><td>+94 75 xxx</td><td><span class="tag menu">Menu</span></td><td>Main Menu Opened</td><td style="color:var(--text-dim)">— View</td></tr>
+        <tr><td>2:22 PM</td><td>+94 70 xxx</td><td><span class="tag song">Song</span></td><td>YouTube Audio DL</td><td style="color:var(--green)">✓ Done</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  🌟 <span>PASIYA MD</span> — WhatsApp Bot — Running 24 Hours Without Error &nbsp;|&nbsp; Powered by Baileys &nbsp;|&nbsp; © 2024
+</footer>
+
+<!-- ============ LIVE CLOCK ============ -->
+<script>
+  // Live uptime counter
+  let uptimeSeconds = 86400; // start at 24h for demo
+  function tick() {
+    uptimeSeconds++;
+    const h = String(Math.floor(uptimeSeconds / 3600) % 24).padStart(2,'0');
+    const m = String(Math.floor((uptimeSeconds % 3600) / 60)).padStart(2,'0');
+    const s = String(uptimeSeconds % 60).padStart(2,'0');
+    document.getElementById('uptime').textContent = `${h}:${m}:${s}`;
+  }
+  setInterval(tick, 1000);
+
+  // Simulated live stat bumps
+  let msgs = 1284, users = 347, dls = 892;
+  setInterval(() => {
+    if (Math.random() < 0.3) {
+      msgs += Math.floor(Math.random() * 3) + 1;
+      document.getElementById('msgCount').textContent = msgs.toLocaleString();
+    }
+    if (Math.random() < 0.15) {
+      users += 1;
+      document.getElementById('userCount').textContent = users.toLocaleString();
+    }
+    if (Math.random() < 0.2) {
+      dls += Math.floor(Math.random() * 2) + 1;
+      document.getElementById('dlCount').textContent = dls.toLocaleString();
+    }
+  }, 3000);
+</script>
+</body>
+</html>

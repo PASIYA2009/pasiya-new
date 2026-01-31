@@ -1,0 +1,18 @@
+{
+  "name": "pasiya-md-bot",
+  "version": "3.0.0",
+  "description": "PASIYA MD — WhatsApp Bot v3 | Auto Seen/React, AI, Creative, Owner Panel",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "baileys": "^4.8.5",
+    "express": "^4.18.2",
+    "ytdl-core": "^4.11.0",
+    "fs-extra": "^11.1.0",
+    "uuid": "^9.0.0",
+    "dotenv": "^16.3.1",
+    "sharp": "^0.32.6"
+  }
+}
